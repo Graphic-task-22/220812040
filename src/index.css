@@ -1,0 +1,18 @@
+
+
+body {
+  margin: 0;
+  h3{
+    text-align: center;
+    color: #ffffff;
+    position:absolute;
+    width: 100%;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+}
