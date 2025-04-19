@@ -7,8 +7,15 @@ import cube, { applyEnvironmentMap } from './mesh/cube';//导入cube
 import plane from './mesh/plane';
 import sphere from './mesh/sphere';
 import pointLight from './lights/pointlight';//导入点光源
+import splineCurve from './line/splineCurve.js';
+import bezierCurve from './line/quadraticBezierCurve.js';
 import torus from './mesh/torus';
 import sprite from './sprites/sprite';
+import bezierCurve3 from './line/cubicBezierCurve3.js';
+import curvePathObject from './line/curvePath.js';
+import line from './line/line.js'; // 导入你写好的线条对象
+import ellipseCurve from './line/ellipseCurve.js'; // 导入你写好的线条对象
+import planeMesh, { updatePosition } from './demo/mountain.js';
 
 // console.log('THREE',THREE);
 
@@ -16,32 +23,48 @@ import sprite from './sprites/sprite';
 //-------------------------------------------------------地球仪效果-------------------------------------------------------------
 
 //创建场景，相机，渲染器
-let renderer,camera,scene,ambientLight;
-function init(){
-    scene=new THREE.Scene();  //Object constructor 
+let renderer, camera, scene, ambientLight;
+
+
+
+// ==============================================================================================
+function init() {
+    scene = new THREE.Scene();  //Object constructor 
     // // 将cube导入到场景
     // scene.add(cube);
     // applyEnvironmentMap(scene);
+    
     //将sphere导入场景中
-    scene.add(sphere);
+    // scene.add(sphere);
+
     // scene.add(torus);
     // //导入一个平面
 
+    // 添加线条到场景中
+    // scene.add(line);
+    // scene.add(ellipseCurve);
+    // scene.add(splineCurve);
+    // scene.add(bezierCurve);
+    // scene.add(bezierCurve3)
+    // scene.add(curvePathObject)
+    scene.add(planeMesh)
 
-    // 将点光导入场景（高开销）
-    scene.add(pointLight);
-    // 点光源辅助观察
-    const pointLightHelpler = new THREE.PointLightHelper(pointLight);
-    scene.add(pointLightHelpler);
-    // 环境光（低开销）
-    ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
+
+
+    // // 将点光导入场景（高开销）
+    // scene.add(pointLight);
+    // // 点光源辅助观察
+    // const pointLightHelpler = new THREE.PointLightHelper(pointLight);
+    // scene.add(pointLightHelpler);
+    // // 环境光（低开销）
+    // ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // scene.add(ambientLight);
 
     // 创建一个相机
-    camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);  //PerspectiveCamera constructor
-        //设置相机位置
-    camera.position.set(100,100,100);
-    camera.lookAt(0,0,0);  
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);  //PerspectiveCamera constructor
+    //设置相机位置
+    camera.position.set(100, 100, 100);
+    camera.lookAt(0, 0, 0);
     console.log(scene.children);
 
     //创建一个渲染器
@@ -51,50 +74,50 @@ function init(){
         powerPreference: "high-performance" // 提高渲染性能
     });
     renderer.setPixelRatio(window.devicePixelRatio);
-    
+
     // 抗锯齿{antialias:true,}
     //// 获取你屏幕对应的设备像素比.devicePixelRatio告诉threejs,以免渲染模糊问题
     // // renderer.setPixelRatio(window.devicePixelRatio);
 
-    renderer.setSize(window.innerWidth,window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 1); //设置背景颜色
-    renderer.render(scene,camera);    //导入
+    renderer.render(scene, camera);    //导入
     document.body.appendChild(renderer.domElement);//把渲染器上的dom放进去
 }
 
 //监听窗口变化
-window.onresize=function(){
-    if(!renderer) return;
-    renderer.setSize(window.innerWidth,window.innerHeight);
-    renderer.render(scene,camera);  
-    camera.aspect=window.innerWidth/window.innerHeight;
+window.onresize = function () {
+    if (!renderer) return;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.render(scene, camera);
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 }
 
 
 //辅助器函数（所有辅助器）
-function initHelper(){
+function initHelper() {
     // 辅助坐标轴
     const axesHelper = new THREE.AxesHelper(50);
     scene.add(axesHelper);
 
     // 设置相机控件轨道控制器OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
-        // 如果OrbitControls改变了相机参数，重新调用渲染器渲染三维场景
+    // 如果OrbitControls改变了相机参数，重新调用渲染器渲染三维场景
     controls.addEventListener('change', function () {
-    renderer.render(scene, camera); //执行渲染操作
+        renderer.render(scene, camera); //执行渲染操作
     }); //监听鼠标、键盘事件
 
-    // 添加一个辅助网格地面 网格地面辅助观察GridHelper
-    const gridHelper = new THREE.GridHelper(300, 25, 0x004444, 0x004444);
-    scene.add(gridHelper);//网格地面辅助器加入到场景中
+    // // 添加一个辅助网格地面 网格地面辅助观察GridHelper
+    // const gridHelper = new THREE.GridHelper(300, 25, 0x004444, 0x004444);
+    // scene.add(gridHelper);//网格地面辅助器加入到场景中
 }
 
-function stopAnimate(){
+function stopAnimate() {
 
     // 立方体旋转
-    cube.rotation.x =0;
-    cube.rotation.y =0;
+    cube.rotation.x = 0;
+    cube.rotation.y = 0;
     renderer.render(scene, camera);
 
 }
@@ -102,13 +125,15 @@ function stopAnimate(){
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+    updatePosition();
+    // console.log(Date.now());
     // 立方体旋转
     sphere.rotation.x += 0.01;
     sphere.rotation.y += 0.01;
     // 或 cube.rotateY(0.01)
-  }
+}
 
-  function initState(){
+function initState() {
     //创建stats对象
     const stats = new Stats();
     //stats.domElement:web页面上输出计算结果,一个div元素，
@@ -121,7 +146,7 @@ function animate() {
         requestAnimationFrame(render); //请求再次执行渲染函数render，渲染下一帧
     }
     render();
-  }
+}
 
 init();
 initHelper();
@@ -146,10 +171,10 @@ const settings = {
         pointLight.intensity = 1;
     },
     pointLightOn: true, // 控制点光源的开关
-     // 预设的 X、Y、Z 轴位置值
-     presetX: 0,
-     presetY: 0,
-     presetZ: 0
+    // 预设的 X、Y、Z 轴位置值
+    presetX: 0,
+    presetY: 0,
+    presetZ: 0
 };
 
 // 创建 Position 分组
@@ -215,6 +240,9 @@ gui.add(settings, 'reset').name('重置参数');
 
 // 默认展开 GUI
 gui.open();
+
+//------------------------------------函数init()--------------------------------
+
 
 
 //-------------------------------------------------地球仪效果--------------------------------------
