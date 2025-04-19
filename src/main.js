@@ -30,15 +30,15 @@ let renderer, camera, scene, ambientLight;
 // ==============================================================================================
 function init() {
     scene = new THREE.Scene();  //Object constructor 
-    // // 将cube导入到场景
+    // 将cube导入到场景
     // scene.add(cube);
     // applyEnvironmentMap(scene);
     
-    //将sphere导入场景中
-    // scene.add(sphere);
+    // 将sphere导入场景中
+    scene.add(sphere);
 
     // scene.add(torus);
-    // //导入一个平面
+    //导入一个平面
 
     // 添加线条到场景中
     // scene.add(line);
@@ -47,18 +47,18 @@ function init() {
     // scene.add(bezierCurve);
     // scene.add(bezierCurve3)
     // scene.add(curvePathObject)
-    scene.add(planeMesh)
+    // scene.add(planeMesh)
 
 
 
-    // // 将点光导入场景（高开销）
-    // scene.add(pointLight);
-    // // 点光源辅助观察
-    // const pointLightHelpler = new THREE.PointLightHelper(pointLight);
-    // scene.add(pointLightHelpler);
-    // // 环境光（低开销）
-    // ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    // scene.add(ambientLight);
+    // 将点光导入场景（高开销）
+    scene.add(pointLight);
+    // 点光源辅助观察
+    const pointLightHelpler = new THREE.PointLightHelper(pointLight);
+    scene.add(pointLightHelpler);
+    // 环境光（低开销）
+    ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
 
     // 创建一个相机
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);  //PerspectiveCamera constructor
