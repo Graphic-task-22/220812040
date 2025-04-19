@@ -16,6 +16,7 @@ import curvePathObject from './line/curvePath.js';
 import line from './line/line.js'; // 导入你写好的线条对象
 import ellipseCurve from './line/ellipseCurve.js'; // 导入你写好的线条对象
 import planeMesh, { updatePosition } from './demo/mountain.js';
+import bufferMesh from './mesh/buffer.js';
 
 // console.log('THREE',THREE);
 
@@ -34,8 +35,8 @@ function init() {
     // scene.add(cube);
     // applyEnvironmentMap(scene);
     
-    // 将sphere导入场景中
-    scene.add(sphere);
+    // 将地球仪sphere导入场景中
+    // scene.add(sphere);
 
     // scene.add(torus);
     //导入一个平面
@@ -47,8 +48,10 @@ function init() {
     // scene.add(bezierCurve);
     // scene.add(bezierCurve3)
     // scene.add(curvePathObject)
-    // scene.add(planeMesh)
+    
+    scene.add(planeMesh)//山脉
 
+    // scene.add(bufferMesh);
 
 
     // 将点光导入场景（高开销）
