@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Tunnel</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // 创建场景
+        const scene = new THREE.Scene();
+
+        // 创建相机
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 200;
+
+        // 创建渲染器
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 创建样条曲线（轨道）
+        const curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 0, 100),
+            new THREE.Vector3(100, 0, 0),
+            new THREE.Vector3(100, 50, -50),
+            new THREE.Vector3(0, 0, -100),
+            new THREE.Vector3(-100, -50, -50),
+            new THREE.Vector3(-100, 0, 0),
+            new THREE.Vector3(-50, 100, 50),
+            new THREE.Vector3(0, 100, 0),
+            new THREE.Vector3(50, -100, 50),
+            new THREE.Vector3(0, -100, 0),
+            new THREE.Vector3(0, 0, 100)
+        ]);
+
+        const tubePoints = curve.getPoints(100); // 获取样条曲线的离散点数组
+
+        // 管道几何体
+        const geometry = new THREE.TubeGeometry(curve, 1000, 20, 1000, true);
+
+        // 纹理加载
+        const loader = new THREE.TextureLoader();
+        const texture = loader.load('../assets/suidao.jpg');  // 确保图片路径正确
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.repeat.x = 20;
+
+        // 材质
+        const material = new THREE.MeshLambertMaterial({
+            map: texture,
+            side: THREE.DoubleSide
+        });
+
+        // 创建管道网格
+        const tube = new THREE.Mesh(geometry, material);
+        scene.add(tube);
+
+        // 设置环境光和点光源
+        const ambientLight = new THREE.AmbientLight(0x555555);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 1, 1000);
+        pointLight.position.set(0, 0, 100);
+        scene.add(pointLight);
+
+        let i = 0;
+        const speed = 1; // 基础速度系数
+
+        // 自动前进
+        function animate() {
+            // 更新相机位置和朝向
+            const currentPoint = tubePoints[i];
+            const nextPoint = tubePoints[(i + 1) % tubePoints.length];
+
+            camera.position.copy(currentPoint);
+            camera.lookAt(nextPoint);
+
+            // i = (i + speed) % tubePoints.length; // 自动前进
+
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // 交互控制
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                i = (i + 8) % tubePoints.length; // 限制索引范围
+            } else if (event.key === 'ArrowLeft') {
+                i = (i - 8 + tubePoints.length) % tubePoints.length; // 允许后退
+            }
+        });
+
+        // 新增鼠标点击控制
+        document.addEventListener('click', () => {
+            i = (i + 20) % tubePoints.length; // 点击加速前进
+        });
+
+        // 监听窗口尺寸变化
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+</body>
+</html>

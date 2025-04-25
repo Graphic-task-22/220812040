@@ -17,7 +17,11 @@ import line from './line/line.js'; // 导入你写好的线条对象
 import ellipseCurve from './line/ellipseCurve.js'; // 导入你写好的线条对象
 import planeMesh, { updatePosition } from './demo/mountain.js';
 import bufferMesh from './mesh/buffer.js';
-
+import lathe from './mesh/lathe.js';
+import tubeMesh from './mesh/tube.js';
+import shapeMesh from './mesh/shape.js';
+import tube from './demo/tunnel.js';
+import { tubePoints } from './demo/tunnel.js';
 // console.log('THREE',THREE);
 
 
@@ -34,7 +38,7 @@ function init() {
     // 将cube导入到场景
     // scene.add(cube);
     // applyEnvironmentMap(scene);
-    
+
     // 将地球仪sphere导入场景中
     // scene.add(sphere);
 
@@ -48,11 +52,23 @@ function init() {
     // scene.add(bezierCurve);
     // scene.add(bezierCurve3)
     // scene.add(curvePathObject)
-    
-    scene.add(planeMesh)//山脉
 
+
+
+
+    // // buffer几何体
     // scene.add(bufferMesh);
+    // 车削缓冲几何体（LatheGeometry）
+    // scene.add(lathe);
+    // //管道几何体
+    // scene.add(tubeMesh);
 
+    // //形状几何体
+    // scene.add(shapeMesh);
+
+//轨道
+    scene.add(tube);
+    // scene.add(planeMesh)//山脉
 
     // 将点光导入场景（高开销）
     scene.add(pointLight);
@@ -125,16 +141,58 @@ function stopAnimate() {
 
 }
 // 渲染循环
+let i = 0;
+const speed = 1; // 基础速度系数
+
+
 function animate() {
+// 自动前进
+// i = (i + speed) % tubePoints.length;
+  // 更新相机位置和朝向
+  const currentPoint = tubePoints[i];
+  const nextPoint = tubePoints[(i + 1) % tubePoints.length];
+
+  camera.position.copy(currentPoint);
+  camera.lookAt(nextPoint);
+
+    // if (i < tubePoints.length - 1) {
+    //     // console.log(tubePoints[i]);
+    //     const camerapoint = tubePoints[i];
+    //     camera.position.copy(camerapoint);
+    //     const nextpoint = tubePoints[i + 1];
+    //     camera.lookAt(nextpoint);
+    //     // i = i + 1;
+    // } else {
+    //     i = 0;
+    // }
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-    updatePosition();
+
+        // updatePosition();
+
     // console.log(Date.now());
     // 立方体旋转
-    sphere.rotation.x += 0.01;
-    sphere.rotation.y += 0.01;
+    // sphere.rotation.x += 0.01;
+    // sphere.rotation.y += 0.01;
     // 或 cube.rotateY(0.01)
 }
+
+// 交互控制
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowRight') {
+      i = (i + 8) % tubePoints.length; // 限制索引范围
+    } else if (event.key === 'ArrowLeft') {
+      i = (i - 8 + tubePoints.length) % tubePoints.length; // 允许后退
+    }
+  });
+  
+  // 新增鼠标点击控制
+  document.addEventListener('click', () => {
+    i = (i + 20) % tubePoints.length; // 点击加速前进
+  });
+  
+
+
 
 function initState() {
     //创建stats对象
