@@ -86,32 +86,47 @@ function createBar(dataArr) {
 
 
 function createTextLabel(value, x, y) {
-    // 创建文本标签
+    // 创建一个画布，用于绘制文本标签
     const canvas = document.createElement('canvas');
+    // 获取2D绘图上下文，后续在canvas上绘制文字
     const context = canvas.getContext('2d');
+    // 设置画布宽度为128像素
     canvas.width = 128;
+    // 设置画布高度为64像素
     canvas.height = 64;
 
-    // context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    // 在画布上绘制一个矩形，填充整个画布
+    // 默认颜色是黑色（因为未设置fillStyle时默认是黑）
     context.fillRect(0, 0, canvas.width, canvas.height);
 
+    // 设置字体样式：加粗，字号28px，字体为Arial
     context.font = 'bold 28px Arial';
+    // 设置文本水平对齐方式为居中
     context.textAlign = 'center';
+    // 设置文本垂直对齐方式为居中（中间）
     context.textBaseline = 'middle';
+    // 设置填充文本颜色为白色
     context.fillStyle = '#ffffff';
+    // 在画布中间绘制文本内容，文本内容是传入的value参数
     context.fillText(`${value}`, canvas.width / 2, canvas.height / 2);
 
+    // 将画布内容作为纹理生成Three.js纹理对象
     const texture = new THREE.CanvasTexture(canvas);
+    // 创建材质，将纹理赋值给材质的贴图属性，支持透明，双面渲染
     const material = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
         side: THREE.DoubleSide
     });
 
+    // 创建一个平面几何体，宽15，高7，作为标签的平面显示面
     const geometry = new THREE.PlaneGeometry(15, 7);
+    // 创建网格对象，由几何体和材质构成
     const mesh = new THREE.Mesh(geometry, material);
+    // 设置网格对象的位置到传入的(x, y)坐标，z轴为0（默认平面）
     mesh.position.set(x, y, 0);
 
+    // 返回创建好的文本标签网格对象，可加入Three.js场景中显示
     return mesh;
 }
 
