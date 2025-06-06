@@ -41,55 +41,49 @@ function createScaleLine(type) {
 }
 
 function createBar(dataArr) {
-    // 创建渐变柱状图
     const bars = new THREE.Group();
+    const height = 100;
+
     dataArr.forEach((data, index) => {
-        // 根据数据值计算颜色（从蓝色到绿色渐变）
-        const colorValue = data / 100;
-        const color = new THREE.Color(
-            0.2 + 0.5 * (1 - colorValue), // R: 蓝色分量
-            0.3 + 0.7 * colorValue,       // G: 绿色分量
-            0.8                            // B: 固定蓝色分量
-        );
+        const geometry = new THREE.PlaneGeometry(10, data, 1, 10);
 
-        // 创建柱体
-        // 创建柱体（使用顶点颜色实现内部渐变）
-        const geometry = new THREE.BoxGeometry(8, data, 8);
-        const colors = [];
-        const colorBottom = new THREE.Color("green"); // 底部颜色：鲜艳红
-        const colorTop = new THREE.Color("red");    // 顶部颜色：鲜艳绿
+        const material = new THREE.MeshBasicMaterial({ vertexColors: true });
+        const positions = geometry.getAttribute('position');
+        const colorArr = [];
 
-        // 为每个顶点设置颜色（BoxGeometry 有 8 个顶点 × 每个面 2 三角形 × 每个三角形 3 顶点）
-        for (let i = 0; i < geometry.attributes.position.count; i++) {
-            const y = geometry.attributes.position.getY(i);
-            const t = (y + data / 2) / data; // 归一化高度（0 底部，1 顶部）
-            const color = colorBottom.clone().lerp(colorTop, t); // 插值渐变
-            colors.push(color.r, color.g, color.b);
+        // 三段颜色：绿色 → 白色 → 红色
+        const color1 = new THREE.Color(0x00ff00); // green
+        const color2 = new THREE.Color(0x0f00ff); // white
+        const color3 = new THREE.Color(0xff0000); // red
+
+        for (let i = 0; i < positions.count; i++) {
+            const y = positions.getY(i);
+            const t = (y + data / 2) / data; // 映射到 [0, 1]
+
+            let color;
+            if (t < 0.5) {
+                const subT = t / 0.5; // [0, 0.5] → [0, 1]
+                color = color1.clone().lerp(color2, subT); // green → white
+            } else {
+                const subT = (t - 0.5) / 0.5; // [0.5, 1] → [0, 1]
+                color = color2.clone().lerp(color3, subT); // white → red
+            }
+
+            colorArr.push(color.r, color.g, color.b);
         }
 
-        // 添加颜色属性
-        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
-        const material = new THREE.MeshPhongMaterial({
-            vertexColors: true, // 允许顶点颜色控制渲染
-            shininess: 500,
-            specular: 0xffffff
-        });
-
+        const colors = new Float32Array(colorArr);
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
         const bar = new THREE.Mesh(geometry, material);
-        bar.position.set(index * 20 + 10 + 5, data / 2, 0);
+        bar.position.x = index * 20 + 10 + 5;
+        bar.position.y = data / 2;
         bars.add(bar);
-        const barX = index * 20 + 15; // 柱子和文字统一 X 坐标
-        bar.position.set(barX, data / 2, 0);
-
-        // 创建数据标签
-        const label = createTextLabel(data, barX, data + 6);
-        bars.add(label);
-
     });
+
     return bars;
 }
+
 
 function createTextLabel(value, x, y) {
     // 创建文本标签
