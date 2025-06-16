@@ -64,7 +64,7 @@ function initGUI() {
 
   // 动作切换控制器
   gui.add(params, 'currentAction', Object.keys(actions)).name('当前动作').onChange((name) => {
-    switchAction(name);
+    switchAction(name);      
   });
 
   gui.add(params, 'switchTo', Object.keys(actions)).name('切换至');
