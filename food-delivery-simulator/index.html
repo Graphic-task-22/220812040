@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>外卖配送模拟器</title>
+<style>
+  body, html {
+    margin: 0; height: 100%; overflow: hidden;
+    font-family: sans-serif;
+  }
+  #orderInfo {
+    position: fixed;
+    top: 20px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 18px;
+    pointer-events: none;
+    user-select: none;
+    min-width: 200px;
+    text-align: center;
+    z-index: 100;
+  }
+  #infoPanel {
+    position: fixed;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    pointer-events: none;
+    user-select: none;
+    min-width: 200px;
+    text-align: center;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+  <div id="orderInfo">当前订单：无</div>
+  <div id="infoPanel">欢迎来到外卖配送模拟器</div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
