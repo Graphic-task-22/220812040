@@ -185,15 +185,16 @@ function checkProximity() {
           return;
         }
         if (b.name === orderDeliveryPoint) {
-          showHint('📦 外卖已送达');
-          deliverSound.play();
-          hasOrder = false;
-          pickedUp = false;
-          orderDeliveryPoint = '';
-          remainingTime = 0;
-          score++;
-          window.currentOrderName = '';  // 清空当前订单名，箭头将隐藏
-          onDelivered();
+           showHint('📦 外卖已送达');
+  deliverSound.play();
+  hasOrder = false;
+  pickedUp = false;
+  orderDeliveryPoint = '';
+  remainingTime = 0;
+  score++;
+  window.currentOrderName = '';
+  updateUI('', 0, score); // ✅ 刷新 UI 显示最新分数
+  onDelivered();
         } else {
           showHint('❌ 不是该地址的外卖');
           wrongDeliverSound.play();
@@ -327,3 +328,6 @@ export function getScore() {
   return score;
 }
 
+export function stopWalkSound() {
+  if (walkSound && walkSound.isPlaying) walkSound.stop();
+}

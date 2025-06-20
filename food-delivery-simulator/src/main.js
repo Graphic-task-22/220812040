@@ -16,6 +16,7 @@ import {
   getCameraMode,
   resetPlayerState,
   getScore,
+    stopWalkSound,
 } from './js/playerModel.js';
 
 import { WeatherSystem } from './js/weather.js';
@@ -114,9 +115,12 @@ function generateOrder() {
 
 setDeliveryHook(() => {
   arrow.visible = false;
-  if (getScore() >= 1) {
+  if (getScore() >= 3) {
     gameEnded = true;
     winPanel.style.display = 'block';
+    if (walkSound && walkSound.isPlaying) {
+      stopWalkSound(); // ✅ 停止脚步声
+    }
     return;
   }
   setTimeout(generateOrder, 1000);
