@@ -1,10 +1,18 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+
+export const collisionBoxes = [];
+
+
 export function loadCommunityModel(scene) {
+
+
+
+
     return new Promise((resolve, reject) => {
         const loader = new GLTFLoader();
-
+        const allModels = [];
         loader.load(
             '../../public/models/fcdda23c281e4934826b8dfde3b0598e.glb',
             (gltf) => {
@@ -32,7 +40,7 @@ export function loadCommunityModel(scene) {
                             rotation: [Math.PI / 2, -Math.PI, Math.PI / 2]
                         }
                     ]).flat(),
-                    ...[ -5,-7,-25, -35, -37, -44, -51].map(z => [
+                    ...[-5, -7, -25, -35, -37, -44, -51].map(z => [
                         {
                             name: 'Tree_Bamboo_001_01',
                             pos: [-50, -0.1, z],
@@ -52,7 +60,7 @@ export function loadCommunityModel(scene) {
                         scale: 0.05,
                         rotation: [Math.PI / 2, Math.PI, Math.PI / -1]
                     },
-                    ...[ -7,-25, -15, -31].map(z => [
+                    ...[-7, -25, -15, -31].map(z => [
                         {
                             name: 'Tree_Bamboo_001_02',
                             pos: [50, -0.1, z],
@@ -73,12 +81,12 @@ export function loadCommunityModel(scene) {
                         scale: 0.04,
                         rotation: [Math.PI / 2, -Math.PI, Math.PI / 2]
                     },
-                     {
+                    {
                         name: 'Tree_006_06',
                         pos: [-58, 7.5, 59],
                         scale: 0.01,
                         rotation: [Math.PI / 2, -Math.PI, Math.PI / 2]
-                    },                  
+                    },
                 ]
 
                 componentsConfig.forEach(config => {
@@ -89,6 +97,10 @@ export function loadCommunityModel(scene) {
                         part.scale.setScalar(config.scale);
                         part.rotation.set(...config.rotation);
                         scene.add(part);
+
+                        part.updateMatrixWorld(true);
+const box = new THREE.Box3().setFromObject(part);
+collisionBoxes.push(box); // ✅ 记录为碰撞物体
 
                         // 为树木添加碰撞盒
                         // const box = new THREE.Box3().setFromObject(part);
@@ -308,6 +320,11 @@ export function loadCommunityModel(scene) {
                         part.rotation.set(...config.rotation);
                         scene.add(part);
 
+part.updateMatrixWorld(true);
+const box = new THREE.Box3().setFromObject(part);
+collisionBoxes.push(box); // ✅ 记录为碰撞物体
+
+                        allModels.push(part);
                         // 为树木添加碰撞盒
                         // const box = new THREE.Box3().setFromObject(part);
                         // collisionBoxes.push(box);
@@ -331,7 +348,8 @@ export function loadCommunityModel(scene) {
                 model.rotation.set(0, 0, 0);
                 model.scale.set(1, 1, 1);
 
-                resolve(model,collisionBoxes);
+                // resolve(model,collisionBoxes);
+                resolve(allModels);
             },
             undefined,
             (error) => {
