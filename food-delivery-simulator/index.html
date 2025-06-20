@@ -1,61 +1,4 @@
-<!-- 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>外卖配送模拟器</title>
-  <style>
-    body, html {
-      margin: 0; height: 100%; overflow: hidden;
-      font-family: sans-serif;
-    }
-    #orderInfo, #timer, #scoreBoard {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 18px;
-      pointer-events: none;
-      user-select: none;
-      min-width: 200px;
-      text-align: center;
-      z-index: 100;
-    }
-    #orderInfo { top: 20px; }
-    #timer { top: 60px; }
-    #scoreBoard { top: 100px; }
-
-    #infoPanel {
-      position: fixed;
-      bottom: 20px; left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 18px;
-      pointer-events: none;
-      user-select: none;
-      min-width: 200px;
-      text-align: center;
-      z-index: 100;
-    }
-  </style>
-</head>
-<body>
-  <div id="orderInfo">当前订单：无</div>
-  <div id="timer">剩余时间：0 秒</div>
-  <div id="scoreBoard">得分：0</div>
-  <div id="infoPanel">欢迎来到外卖配送模拟器</div>
-
-  <script type="module" src="./src/main.js"></script>
-</body>
-</html> -->
 
 
 <!DOCTYPE html>
@@ -78,7 +21,7 @@
   #topBar {
     position: fixed;
     top: 20px;
-    left: 15%;
+    left: 20%;
     transform: translateX(-50%);
     display: flex;
     gap: 15px;
@@ -117,6 +60,10 @@
     border-color: #4caf50;
     color: #4caf50;
   }
+  #restartBtn{
+    border-color: #af4c96;
+    color: #af4cad;
+  }
 
   /* 底部信息提示栏保持不变 */
   #infoPanel {
@@ -147,8 +94,15 @@
     <div id="orderInfo">当前订单：无</div>
     <div id="timer">剩余时间：0 秒</div>
     <div id="scoreBoard">得分：0</div>
+    <div id="winPanel" style="display: none;">
+  🎉 通关成功！
+  <button id="restartBtn">重新开始</button>
+</div>
+
   </div>
   <div id="infoPanel">欢迎来到外卖配送模拟器</div>
+  
+
 
   <script type="module" src="./src/main.js"></script>
 </body>
